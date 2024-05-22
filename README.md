@@ -3,8 +3,8 @@
 
 ## Installation
 1. Create a conda environment.
-  'conda create -n your_env_name'
+`conda create -n your_env_name`
 2. Install the libraries.
-  'pip install -r requirements'
+   `pip install -r requirements`
 3. Run the main.py.
-  'streamlit run main.py'
+   `streamlit run main.py`
