@@ -1,4 +1,4 @@
-# Bryle - The RAG ChatBot
+# Bryle - The RAG ChatBot :joy:
 ** This is an LLM powered, RAG chat bot with scraping capabilities.
 
 ## Installation
