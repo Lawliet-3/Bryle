@@ -1,5 +1,5 @@
 # Bryle - The RAG ChatBot 
-** This is an LLM powered, RAG chat bot with scraping capabilities. **
+**This is an LLM powered, RAG chat bot with scraping capabilities.**
 
 ## Installation
 1. Create a conda environment.
