@@ -10,7 +10,7 @@
 #### 1. Create a Conda Environment
 Create a new Conda environment to manage dependencies. Replace `your_env_name` with your desired environment name.
 ```bash
-conda create --name your_env_name python=3.x
+conda create --name your_env_name
 conda activate your_env_name
 ```
 
@@ -51,8 +51,9 @@ conda deactivate
 #### Credentials and Environment Variables
 If your application requires credentials or other environment variables, ensure they are set correctly in an `.env` file. Here is an example of how to set up your `.env` file:
 ```env
-API_KEY=your_api_key
-SECRET_KEY=your_secret_key
+OPENAI_API_KEY=your_api_key
+APIFY_API_TOKEN=your_secret_key
+WEBSITE_URL=YOUR_WEBSITE_URL_TO_SCRAPE
 ```
 
 ### Usage
@@ -73,7 +74,7 @@ Once the environment is set up and the application is running, you can interact 
 1. **Fork the Repository**: Create a personal copy of the project on your GitHub account.
 2. **Clone the Forked Repository**: Clone the repository to your local machine.
     ```bash
-    git clone https://github.com/your_username/Bryle-RAG-ChatBot.git
+    git clone https://github.com/your_username/Bryle.git
     ```
 3. **Create a New Branch**: Create a branch for your feature or bug fix.
     ```bash
