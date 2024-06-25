@@ -1,6 +1,4 @@
-### README for Bryle - The RAG ChatBot
 
----
 
 ## Bryle - The RAG ChatBot
 **This is an LLM-powered RAG chatbot with scraping capabilities.**
