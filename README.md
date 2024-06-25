@@ -1,4 +1,4 @@
-###README for Bryle - The RAG ChatBot
+### README for Bryle - The RAG ChatBot
 
 ---
 
