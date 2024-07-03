@@ -7,3 +7,4 @@ streamlit
 tiktoken
 langchain-community
 langchain-chroma
+sqlite3 >= 3.35.0
