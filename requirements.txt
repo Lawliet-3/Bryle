@@ -6,3 +6,4 @@ python-dotenv
 streamlit
 tiktoken
 langchain-community
+langchain-chroma
