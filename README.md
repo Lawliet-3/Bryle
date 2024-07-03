@@ -1,7 +1,7 @@
-
+![image](https://github.com/Lawliet-3/Bryle/assets/48017441/f2160b22-835f-43f5-9881-d95f21f13d29)
 
 ## Bryle - The RAG ChatBot
-**This is an LLM-powered RAG chatbot with scraping capabilities.**
+**This is an LLM-powered RAG chatbot with scraping capabilities. You can see the hosted version here[https://brylebot.streamlit.app/].**
 
 ### Installation
 
