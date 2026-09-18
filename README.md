@@ -1,10 +1,6 @@
 # Bryle
 
-Bryle is a compact retrieval-augmented generation (RAG) application that crawls a website, indexes its content in Chroma, retrieves relevant passages for a question, and generates a source-grounded answer in Streamlit.
-
-This repository started as an early LangChain experiment. The current version keeps the original idea but makes the pipeline explicit and easier to understand, test, and extend.
-
-**Live demo:** [brylebot.streamlit.app](https://brylebot.streamlit.app/)
+Bryle is a compact retrieval-augmented generation (RAG) application that crawls a website, indexes its content in Chroma, retrieves relevant passages, and streams source-grounded answers through a FastAPI backend and Next.js frontend.
 
 ## How it works
 
@@ -12,15 +8,15 @@ This repository started as an early LangChain experiment. The current version ke
 2. **Chunk** — page text is split into deterministic overlapping chunks.
 3. **Embed** — OpenAI embeddings convert chunks into vectors.
 4. **Store** — vectors and source metadata are persisted in Chroma.
-5. **Retrieve** — the most relevant chunks are fetched for each question.
-6. **Generate** — OpenAI answers using only retrieved context.
-7. **Cite** — the UI exposes the source pages used for retrieval.
-
-
+5. **Retrieve** — the most relevant chunks are selected for each question.
+6. **Generate** — the OpenAI Responses API streams an answer grounded in those chunks.
+7. **Cite** — the frontend shows inspectable source cards with supporting snippets.
 
 ## Quick start
 
-Python 3.11+ is recommended.
+Python 3.11+ and Node.js 22+ are recommended.
+
+### Backend
 
 ```bash
 python -m venv .venv
@@ -31,36 +27,51 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env`, then set at least:
+Copy `.env.example` to `.env` and configure:
 
 ```env
 OPENAI_API_KEY=...
 APIFY_API_TOKEN=...
 WEBSITE_URL=https://example.com
+FRONTEND_ORIGINS=http://localhost:3000
 ```
 
-Build the knowledge base:
+Build the local knowledge base and start the API:
 
 ```bash
 python -m scripts.scrape
+uvicorn bryle.api:app --reload
 ```
 
-Start the app:
+The API runs at `http://localhost:8000`. Its interactive documentation is available at `http://localhost:8000/docs`.
+
+### Frontend
+
+In a second terminal:
 
 ```bash
-streamlit run main.py
+cd frontend
+npm install
+copy .env.local.example .env.local  # Windows
+# cp .env.local.example .env.local  # macOS / Linux
+npm run dev
 ```
+
+Open `http://localhost:3000`.
 
 ## Development
 
 ```bash
 pip install -r requirements-dev.txt
-ruff check main.py bryle scripts tests
+ruff check bryle scripts tests
 python -m pytest -q
+
+cd frontend
+npm run lint
+npm run build
 ```
 
-GitHub Actions runs the same lint and test checks for pull requests.
-
+GitHub Actions runs the backend lint/tests and frontend lint/build for every pull request.
 
 ## Next steps
 

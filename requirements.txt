@@ -1,5 +1,6 @@
 apify-client>=2.0,<3
 chromadb>=1.0,<2
+fastapi>=0.116,<1
 openai>=2.0,<3
 python-dotenv>=1.0,<2
-streamlit>=1.49,<2
+uvicorn[standard]>=0.35,<1
