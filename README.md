@@ -2,6 +2,8 @@
 
 Bryle is a compact retrieval-augmented generation (RAG) application that crawls a website, indexes its content in Chroma, retrieves relevant passages, and streams source-grounded answers through a FastAPI backend and Next.js frontend.
 
+![Bryle homepage](docs/assets/bryle-home.png)
+
 ## How it works
 
 1. **Crawl** — Apify extracts pages from a configured website.
