@@ -4,6 +4,8 @@ Bryle is a compact retrieval-augmented generation (RAG) application that crawls 
 
 This repository started as an early LangChain experiment. The current version keeps the original idea but makes the pipeline explicit and easier to understand, test, and extend.
 
+**Live demo:** [brylebot.streamlit.app](https://brylebot.streamlit.app/)
+
 ## How it works
 
 1. **Crawl** — Apify extracts pages from a configured website.
@@ -15,22 +17,6 @@ This repository started as an early LangChain experiment. The current version ke
 7. **Cite** — the UI exposes the source pages used for retrieval.
 
 
-## Project structure
-
-```text
-.
-├── bryle/
-│   ├── chunking.py      # deterministic text chunking
-│   ├── config.py        # environment configuration
-│   ├── rag.py           # retrieval + grounded generation
-│   └── store.py         # OpenAI embeddings + Chroma access
-├── scripts/
-│   └── scrape.py        # crawl and rebuild the local index
-├── tests/
-├── main.py              # Streamlit application
-├── requirements.txt
-└── requirements-dev.txt
-```
 
 ## Quick start
 
@@ -75,18 +61,10 @@ python -m pytest -q
 
 GitHub Actions runs the same lint and test checks for pull requests.
 
-## Why the rewrite?
 
-- **No LangChain dependency.** The retrieval and generation stages are visible instead of hidden behind chain abstractions.
-- **Source-grounded answers.** Retrieved chunks keep page URLs and titles so answers can be traced back to source pages.
-- **Prompt-injection awareness.** Crawled website text is explicitly treated as untrusted data rather than executable instructions.
-- **Configuration instead of hard-coding.** Models, retrieval depth, crawl limits, collection name, and storage path are environment-driven.
-- **Tests and CI.** The repository now has unit tests, linting, and a pull-request workflow.
+## Next steps
 
-## Current scope
-
-Bryle is intentionally small rather than pretending to be a production platform. Natural next steps are reranking or hybrid retrieval, evaluation datasets, retrieval metrics, ingestion deduplication, observability, background indexing, authentication, and a hosted vector database.
-
-## Original demo
-
-An older Streamlit deployment may still exist at https://brylebot.streamlit.app/, but it was built from the original implementation and may not reflect this version.
+- Add hybrid retrieval and reranking for more accurate results.
+- Build a small evaluation dataset and track retrieval and answer quality.
+- Move ingestion to a background job with deduplication and scheduled refreshes.
+- Add observability, authentication, and a hosted vector database for deployment.
