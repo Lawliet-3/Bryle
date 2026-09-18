@@ -3,15 +3,15 @@ from __future__ import annotations
 import hashlib
 
 from apify_client import ApifyClient
+from bryle.chunking import chunk_text
 from dotenv import load_dotenv
 
-from bryle.chunking import chunk_text
 from bryle.config import Settings
 from bryle.store import VectorStore
 
 
 def _chunk_id(url: str, index: int, text: str) -> str:
-    digest = hashlib.sha256(f"{url}:{index}:{text}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha256(f"{url}:{index}:{text}".encode()).hexdigest()
     return digest[:32]
 
 
@@ -68,3 +68,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

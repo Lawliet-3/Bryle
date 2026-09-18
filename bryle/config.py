@@ -32,7 +32,7 @@ class Settings:
     max_crawl_pages: int
 
     @classmethod
-    def from_env(cls, *, require_apify: bool = False) -> "Settings":
+    def from_env(cls, *, require_apify: bool = False) -> Settings:
         openai_api_key = os.getenv("OPENAI_API_KEY", "").strip()
         website_url = os.getenv("WEBSITE_URL", "").strip()
         apify_api_token = os.getenv("APIFY_API_TOKEN", "").strip() or None
@@ -61,3 +61,4 @@ class Settings:
             top_k=_positive_int("TOP_K", 5),
             max_crawl_pages=_positive_int("MAX_CRAWL_PAGES", 50),
         )
+

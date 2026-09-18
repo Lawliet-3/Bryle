@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 from bryle.config import ConfigurationError, Settings
 from bryle.rag import RAGService
 
-
 load_dotenv()
 st.set_page_config(page_title="Bryle", page_icon="🔎", layout="centered")
 
@@ -110,3 +109,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

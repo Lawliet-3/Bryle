@@ -7,7 +7,6 @@ from openai import OpenAI
 from bryle.config import Settings
 from bryle.store import RetrievedChunk, VectorStore
 
-
 SYSTEM_PROMPT = """
 You are Bryle, a retrieval-augmented assistant for one indexed website.
 Use the supplied retrieved context as your factual source of truth.
@@ -85,3 +84,4 @@ class RAGService:
         for event in stream:
             if event.type == "response.output_text.delta":
                 yield event.delta
+

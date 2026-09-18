@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 import chromadb
 from openai import OpenAI
@@ -33,11 +33,12 @@ class VectorStore:
         return self.collection.count()
 
     def reset(self) -> None:
-        try:
+        collection_exists = any(
+            collection.name == self.settings.collection_name
+            for collection in self.chroma.list_collections()
+        )
+        if collection_exists:
             self.chroma.delete_collection(self.settings.collection_name)
-        except Exception:
-            # Chroma raises when the collection does not yet exist.
-            pass
         self.collection = self.chroma.get_or_create_collection(
             name=self.settings.collection_name,
             metadata={"hnsw:space": "cosine"},
