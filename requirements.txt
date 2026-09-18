@@ -1,10 +1,5 @@
-﻿apify-client
-chromadb
-langchain
-openai
-python-dotenv
-streamlit
-tiktoken
-langchain-community
-langchain-chroma
-pysqlite3-binary
+apify-client>=2.0,<3
+chromadb>=1.0,<2
+openai>=2.0,<3
+python-dotenv>=1.0,<2
+streamlit>=1.49,<2
