@@ -43,8 +43,6 @@ python -m scripts.scrape
 uvicorn bryle.api:app --reload
 ```
 
-The API runs at `http://localhost:8000`. Its interactive documentation is available at `http://localhost:8000/docs`.
-
 ### Frontend
 
 In a second terminal:
@@ -70,8 +68,6 @@ cd frontend
 npm run lint
 npm run build
 ```
-
-GitHub Actions runs the backend lint/tests and frontend lint/build for every pull request.
 
 ## Next steps
 
