@@ -3,9 +3,9 @@ from __future__ import annotations
 import hashlib
 
 from apify_client import ApifyClient
-from bryle.chunking import chunk_text
 from dotenv import load_dotenv
 
+from bryle.chunking import chunk_text
 from bryle.config import Settings
 from bryle.store import VectorStore
 
