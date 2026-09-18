@@ -14,25 +14,6 @@ This repository started as an early LangChain experiment. The current version ke
 6. **Generate** — OpenAI answers using only retrieved context.
 7. **Cite** — the UI exposes the source pages used for retrieval.
 
-## Architecture
-
-```text
-Website
-   |
-   v
-Apify crawler -> chunking -> OpenAI embeddings -> Chroma
-                                                |
-User question -> query embedding -> retrieval --+
-                              |
-                              v
-                   grounded prompt + history
-                              |
-                              v
-                       OpenAI response
-                              |
-                              v
-                   Streamlit answer + sources
-```
 
 ## Project structure
 
