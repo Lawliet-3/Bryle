@@ -1,49 +1,112 @@
-import os
+from __future__ import annotations
+
+from urllib.parse import urlparse
+
 import streamlit as st
-
-# third party imports
 from dotenv import load_dotenv
-from langchain.chains import ConversationalRetrievalChain
-from langchain_community.chat_models import ChatOpenAI
-from langchain.memory import ConversationBufferMemory
-from langchain_community.chat_message_histories import StreamlitChatMessageHistory
-# local imports
-from tools.utils import get_retriever, StreamHandler
+
+from bryle.config import ConfigurationError, Settings
+from bryle.rag import RAGService
 
 
-def main():
+load_dotenv()
+st.set_page_config(page_title="Bryle", page_icon="🔎", layout="centered")
 
-    website_url = os.environ.get('WEBSITE_URL', 'a website')
-    st.set_page_config(page_title=f'Chat with {website_url}')
-    st.title('Chat with a website')
 
-    retriever = get_retriever()
+def _site_name(url: str) -> str:
+    parsed = urlparse(url)
+    return parsed.netloc or url
 
-    msgs = StreamlitChatMessageHistory()
-    memory = ConversationBufferMemory(memory_key='chat_history', chat_memory=msgs, return_messages=True)
 
-    llm = ChatOpenAI(model_name='gpt-3.5-turbo', temperature=0, streaming=True)
-    qa_chain = ConversationalRetrievalChain.from_llm(
-        llm, retriever=retriever, memory=memory, verbose=False
+@st.cache_resource
+def get_service() -> RAGService:
+    return RAGService(Settings.from_env())
+
+
+def render_sources(chunks) -> None:
+    seen: set[str] = set()
+    sources = []
+    for chunk in chunks:
+        if chunk.source and chunk.source not in seen:
+            seen.add(chunk.source)
+            sources.append(chunk)
+
+    if not sources:
+        return
+
+    with st.expander(f"Sources ({len(sources)})"):
+        for index, chunk in enumerate(sources, start=1):
+            label = chunk.title or chunk.source
+            st.markdown(f"**[{index}] {label}**")
+            st.markdown(chunk.source)
+
+
+def main() -> None:
+    st.title("Bryle")
+    st.caption("A small, source-grounded RAG assistant for a website.")
+
+    try:
+        service = get_service()
+    except ConfigurationError as exc:
+        st.error(str(exc))
+        st.info("Copy .env.example to .env, fill in the required values, then restart the app.")
+        st.stop()
+
+    site = _site_name(service.settings.website_url)
+
+    with st.sidebar:
+        st.subheader("Index")
+        st.write(f"**Website:** {site}")
+        st.write(f"**Indexed chunks:** {service.count()}")
+        st.caption("To refresh the knowledge base, run: python -m scripts.scrape")
+        if st.button("Clear chat", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    if not st.session_state.messages:
+        st.info(f"Ask a question about **{site}**. Answers are grounded in the indexed pages.")
+
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+            if message["role"] == "assistant" and message.get("sources"):
+                render_sources(message["sources"])
+
+    question = st.chat_input(f"Ask about {site}…")
+    if not question:
+        return
+
+    prior_history = [
+        {"role": message["role"], "content": message["content"]}
+        for message in st.session_state.messages
+    ]
+    st.session_state.messages.append({"role": "user", "content": question})
+
+    with st.chat_message("user"):
+        st.markdown(question)
+
+    chunks = service.retrieve(question)
+    with st.chat_message("assistant"):
+        answer = st.write_stream(
+            service.stream_answer(
+                question=question,
+                chunks=chunks,
+                history=prior_history,
+            )
+        )
+        render_sources(chunks)
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": answer,
+            "sources": chunks,
+        }
     )
 
-    if st.sidebar.button('Clear message history') or len(msgs.messages) == 0:
-        msgs.clear()
-        msgs.add_ai_message(f'Ask me anything about {website_url}!')
 
-    avatars = {'human': 'user', 'ai': 'assistant'}
-    for msg in msgs.messages:
-        st.chat_message(avatars[msg.type]).write(msg.content)
-
-    if user_query := st.chat_input(placeholder='Ask me anything!'):
-        st.chat_message('user').write(user_query)
-
-        with st.chat_message('assistant'):
-            stream_handler = StreamHandler(st.empty())
-            response = qa_chain.run(user_query, callbacks=[stream_handler])
-
-
-if __name__ == '__main__':
-    
-    load_dotenv()
+if __name__ == "__main__":
     main()
