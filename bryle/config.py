@@ -52,7 +52,7 @@ class Settings:
             openai_api_key=openai_api_key,
             website_url=website_url,
             apify_api_token=apify_api_token,
-            chat_model=os.getenv("OPENAI_CHAT_MODEL", "gpt-5.6-luna").strip(),
+            chat_model=os.getenv("OPENAI_CHAT_MODEL", "gpt-5-mini").strip(),
             embedding_model=os.getenv(
                 "OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"
             ).strip(),
