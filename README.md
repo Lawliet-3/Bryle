@@ -70,7 +70,7 @@ streamlit run main.py
 ```bash
 pip install -r requirements-dev.txt
 ruff check main.py bryle scripts tests
-pytest -q
+python -m pytest -q
 ```
 
 GitHub Actions runs the same lint and test checks for pull requests.
