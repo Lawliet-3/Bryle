@@ -1,89 +1,111 @@
-![image)](https://github.com/Lawliet-3/Bryle/assets/48017441/d60cf17e-d0da-49d5-8ba3-622c1832bf81)
+# Bryle
 
-## Bryle - The RAG ChatBot
-**This is an LLM-powered RAG chatbot with scraping capabilities. You can see the hosted version here[https://brylebot.streamlit.app/].**
+Bryle is a compact retrieval-augmented generation (RAG) application that crawls a website, indexes its content in Chroma, retrieves relevant passages for a question, and generates a source-grounded answer in Streamlit.
 
-### Installation
+This repository started as an early LangChain experiment. The current version keeps the original idea but makes the pipeline explicit and easier to understand, test, and extend.
 
-#### 1. Create a Conda Environment
-Create a new Conda environment to manage dependencies. Replace `your_env_name` with your desired environment name.
-```bash
-conda create --name your_env_name
-conda activate your_env_name
+## How it works
+
+1. **Crawl** — Apify extracts pages from a configured website.
+2. **Chunk** — page text is split into deterministic overlapping chunks.
+3. **Embed** — OpenAI embeddings convert chunks into vectors.
+4. **Store** — vectors and source metadata are persisted in Chroma.
+5. **Retrieve** — the most relevant chunks are fetched for each question.
+6. **Generate** — OpenAI answers using only retrieved context.
+7. **Cite** — the UI exposes the source pages used for retrieval.
+
+## Architecture
+
+```text
+Website
+   |
+   v
+Apify crawler -> chunking -> OpenAI embeddings -> Chroma
+                                                |
+User question -> query embedding -> retrieval --+
+                              |
+                              v
+                   grounded prompt + history
+                              |
+                              v
+                       OpenAI response
+                              |
+                              v
+                   Streamlit answer + sources
 ```
 
-#### 2. Install Required Libraries
-Install all necessary libraries listed in the `requirements.txt` file.
+## Project structure
+
+```text
+.
+├── bryle/
+│   ├── chunking.py      # deterministic text chunking
+│   ├── config.py        # environment configuration
+│   ├── rag.py           # retrieval + grounded generation
+│   └── store.py         # OpenAI embeddings + Chroma access
+├── scripts/
+│   └── scrape.py        # crawl and rebuild the local index
+├── tests/
+├── main.py              # Streamlit application
+├── requirements.txt
+└── requirements-dev.txt
+```
+
+## Quick start
+
+Python 3.11+ is recommended.
+
 ```bash
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS / Linux
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-#### 3. Run the Application
-Execute the main script using Streamlit to start the chatbot.
+Copy `.env.example` to `.env`, then set at least:
+
+```env
+OPENAI_API_KEY=...
+APIFY_API_TOKEN=...
+WEBSITE_URL=https://example.com
+```
+
+Build the knowledge base:
+
+```bash
+python -m scripts.scrape
+```
+
+Start the app:
+
 ```bash
 streamlit run main.py
 ```
 
-### Additional Information
+## Development
 
-#### Updating Libraries
-To update the installed libraries, you can run:
 ```bash
-pip install --upgrade -r requirements.txt
+pip install -r requirements-dev.txt
+ruff check main.py bryle scripts tests
+pytest -q
 ```
 
-#### Activating the Environment
-Each time you start a new terminal session, activate the Conda environment with:
-```bash
-conda activate your_env_name
-```
+GitHub Actions runs the same lint and test checks for pull requests.
 
-#### Deactivating the Environment
-To deactivate the environment when you're done, use:
-```bash
-conda deactivate
-```
+## Why the rewrite?
 
-### Configuration
+- **No LangChain dependency.** The retrieval and generation stages are visible instead of hidden behind chain abstractions.
+- **Source-grounded answers.** Retrieved chunks keep page URLs and titles so answers can be traced back to source pages.
+- **Prompt-injection awareness.** Crawled website text is explicitly treated as untrusted data rather than executable instructions.
+- **Configuration instead of hard-coding.** Models, retrieval depth, crawl limits, collection name, and storage path are environment-driven.
+- **Tests and CI.** The repository now has unit tests, linting, and a pull-request workflow.
 
-#### Credentials and Environment Variables
-If your application requires credentials or other environment variables, ensure they are set correctly in an `.env` file. Here is an example of how to set up your `.env` file:
-```env
-OPENAI_API_KEY=your_api_key
-APIFY_API_TOKEN=your_secret_key
-WEBSITE_URL=YOUR_WEBSITE_URL_TO_SCRAPE
-```
+## Current scope
 
-### Usage
+Bryle is intentionally small rather than pretending to be a production platform. Natural next steps are reranking or hybrid retrieval, evaluation datasets, retrieval metrics, ingestion deduplication, observability, background indexing, authentication, and a hosted vector database.
 
-#### Running the ChatBot
-Once the environment is set up and the application is running, you can interact with the chatbot through the Streamlit interface. The chatbot is capable of answering questions, performing searches, and scraping content from the web as needed.
+## Original demo
 
-### Troubleshooting
-
-#### Common Issues
-- **Environment Activation**: Ensure you have activated the correct Conda environment before running commands.
-- **Library Installation**: Verify that all libraries are installed without errors. Missing libraries can cause runtime issues.
-- **Credentials**: Double-check that all necessary credentials are correctly set in the `.env` file.
-
-### Contribution
-
-#### How to Contribute
-1. **Fork the Repository**: Create a personal copy of the project on your GitHub account.
-2. **Clone the Forked Repository**: Clone the repository to your local machine.
-    ```bash
-    git clone https://github.com/your_username/Bryle.git
-    ```
-3. **Create a New Branch**: Create a branch for your feature or bug fix.
-    ```bash
-    git checkout -b feature/your_feature_name
-    ```
-4. **Make Your Changes**: Implement your changes and commit them with descriptive messages.
-5. **Push to Your Fork**: Push your changes to your forked repository.
-    ```bash
-    git push origin feature/your_feature_name
-    ```
-6. **Submit a Pull Request**: Open a pull request to the main repository.
-
----
-
+An older Streamlit deployment may still exist at https://brylebot.streamlit.app/, but it was built from the original implementation and may not reflect this version.
